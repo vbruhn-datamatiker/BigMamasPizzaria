@@ -6,5 +6,6 @@ namespace BMPClassLibrary.Repository
 {
     public class BookingRepository
     {
+
     }
 }

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="BigMamasPizzaria/BigMamasPizzaria.csproj" />
+  <Project Path="BMPClassLibrary/BMPClassLibrary.csproj" />
+</Solution>

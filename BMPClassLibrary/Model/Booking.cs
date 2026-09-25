@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BMPClassLibrary.Model
 {
-    internal class Booking
+    public class Booking
     {
     }
 }

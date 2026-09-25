@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BMPClassLibrary.Model
+namespace BMPClassLibrary.Repository
 {
-    public class User
+    public class BookingRepository
     {
     }
 }

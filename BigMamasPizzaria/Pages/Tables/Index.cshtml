@@ -1,0 +1,23 @@
+﻿@page
+@{
+    ViewData["Title"] = "Tables";
+}
+
+<h2 class="mb-3"><i class="bi bi-grid-3x3-gap"></i> Tables</h2>
+
+<div class="row g-3">
+    @* TODO: loop over tables once you have a TableRepository *@
+    @for (int i = 1; i <= 8; i++)
+    {
+        var free = i % 3 != 0;
+        <div class="col-6 col-md-3">
+            <div class="card text-center shadow-sm border-@(free ? "success" : "danger")">
+                <div class="card-body">
+                    <h5 class="card-title">Table @i</h5>
+                    <p class="mb-1"><i class="bi bi-people"></i> @(i % 2 == 0 ? 4 : 2) seats</p>
+                    <span class="badge text-bg-@(free ? "success" : "danger")">@(free ? "Free" : "Booked")</span>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -6,10 +6,10 @@ namespace BMPClassLibrary.Model
 {
     public class Booking
     {
-        public int _bookingId { get; set; }
-        public string _name { get; set; }
-        public string _phone { get; set; }
-        public DateTime _bookingDate { get; set; }
+        public int bookingId { get; set; }
+        public string name { get; set; }
+        public string phone { get; set; }
+        public DateTime bookingDate { get; set; }
 
         
 	}

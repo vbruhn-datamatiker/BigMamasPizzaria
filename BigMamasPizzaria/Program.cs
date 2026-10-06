@@ -9,6 +9,7 @@ builder.Services.AddSingleton<UserRepository>();
 builder.Services.AddSingleton<BookingRepository>();
 // Later, when you add services:
 // builder.Services.AddSingleton<IBookingService, BookingService>();
+builder.Services.AddSingleton<TableRepository>();
 
 var app = builder.Build();
 

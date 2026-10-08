@@ -20,5 +20,10 @@ namespace BMPClassLibrary.Model
                 return FirstName + " " + LastName;
             }
         }
-    }
+
+        public override string ToString()
+		{
+			return $"AdminId: {AdminId}, FirstName: {FirstName}, LastName: {LastName}, Email: {Email}";
+		}
+	}
 }

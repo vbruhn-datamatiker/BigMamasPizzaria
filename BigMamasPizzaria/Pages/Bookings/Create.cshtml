@@ -15,26 +15,49 @@
                     <div class="col-md-6">
                         <label class="form-label">Name</label>
                         <input asp-for="Name" class="form-control" required />
+                        <span asp-validation-for="Name" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Phone</label>
                         <input asp-for="Phone" type="tel" class="form-control" required />
+                        <span asp-validation-for="Phone" class="text-danger"></span>
                     </div>
-                    <div class="col-md-5">
-                        <label class="form-label">From</label>
-                        <input asp-for="Start" type="datetime-local" class="form-control" />
+                    <div class="col-md-6">
+                        <label class="form-label">Booking Date & Time</label>
+                        <input asp-for="BookingDate" type="datetime-local" class="form-control" required />
+                        <span asp-validation-for="BookingDate" class="text-danger"></span>
                     </div>
-                    <div class="col-md-5">
-                        <label class="form-label">To</label>
-                        <input asp-for="End" type="datetime-local" class="form-control" />
-                    </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <label class="form-label">Guests</label>
-                        <input asp-for="GuestCount" type="number" min="1" class="form-control" />
+                        <input asp-for="GuestCount" type="number" min="1" max="20" class="form-control" required />
+                        <span asp-validation-for="GuestCount" class="text-danger"></span>
                     </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Select Table</label>
+                        <select asp-for="SelectedTableId" class="form-select" required>
+                            <option value="">-- Select a table --</option>
+                            @foreach (var table in Model.AvailableTables)
+                            {
+                                <option value="@table.TableId">Table @table.TableId (Seats @table.Capacity)</option>
+                            }
+                        </select>
+                        <span asp-validation-for="SelectedTableId" class="text-danger"></span>
+                    </div>
+                    @if (Model.AvailableTables.Count == 0)
+                    {
+                        <div class="col-12">
+                            <div class="alert alert-warning" role="alert">
+                                No tables available for the selected date, time, and guest count. Please try different parameters.
+                            </div>
+                        </div>
+                    }
                 </div>
                 <button type="submit" class="btn btn-danger mt-4 w-100">Request booking</button>
             </form>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

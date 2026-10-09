@@ -1,0 +1,87 @@
+@page "{id:int}"
+@model BigMamasPizzaria.Pages.Bookings.EditModel
+@{
+	ViewData["Title"] = "Edit Booking";
+}
+
+<div class="row justify-content-center">
+	<div class="col-lg-7">
+		<div class="card shadow-sm">
+			<div class="card-header bg-white">
+				<h4 class="mb-0"><i class="bi bi-pencil-square"></i> Edit Booking</h4>
+			</div>
+			<form method="post" class="card-body">
+				<input type="hidden" asp-for="Booking.BookingId" />
+
+				<div class="row g-3">
+					<div class="col-md-6">
+						<label class="form-label">Name</label>
+						<input asp-for="Booking.Name" class="form-control" required />
+						<span asp-validation-for="Booking.Name" class="text-danger"></span>
+					</div>
+					<div class="col-md-6">
+						<label class="form-label">Phone</label>
+						<input asp-for="Booking.Phone" type="tel" class="form-control" required />
+						<span asp-validation-for="Booking.Phone" class="text-danger"></span>
+					</div>
+					<div class="col-md-6">
+						<label class="form-label">Booking Date & Time</label>
+						<input asp-for="Booking.BookingDate" type="datetime-local" class="form-control" required />
+						<span asp-validation-for="Booking.BookingDate" class="text-danger"></span>
+					</div>
+					<div class="col-md-3">
+						<label class="form-label">Guests</label>
+						<input asp-for="Booking.GuestCount" type="number" min="1" max="20" class="form-control" required />
+						<span asp-validation-for="Booking.GuestCount" class="text-danger"></span>
+					</div>
+					<div class="col-md-3">
+						<label class="form-label">Table</label>
+						<select asp-for="Booking.SelectedTableId" class="form-select" required>
+							<option value="">-- Select --</option>
+							@foreach (var table in Model.AvailableTables)
+							{
+								<option value="@table.TableId" selected="@(table.TableId == Model.Booking.SelectedTableId)">
+									Table @table.TableId (Seats @table.Capacity)
+								</option>
+							}
+						</select>
+						<span asp-validation-for="Booking.SelectedTableId" class="text-danger"></span>
+					</div>
+					<div class="col-md-12">
+						<label class="form-label">Status</label>
+						<select asp-for="Booking.Status" class="form-select" required>
+							<option value="Confirmed" selected="@(Model.Booking.Status == "Confirmed")">Confirmed</option>
+							<option value="Cancelled" selected="@(Model.Booking.Status == "Cancelled")">Cancelled</option>
+							<option value="Completed" selected="@(Model.Booking.Status == "Completed")">Completed</option>
+						</select>
+					</div>
+				</div>
+
+				@if (!ViewData.ModelState.IsValid)
+				{
+					<div class="alert alert-danger mt-3" role="alert">
+						<strong>Errors found:</strong>
+						<ul class="mb-0">
+							@foreach (var modelState in ViewData.ModelState.Values)
+							{
+								@foreach (var error in modelState.Errors)
+								{
+									<li>@error.ErrorMessage</li>
+								}
+							}
+						</ul>
+					</div>
+				}
+
+				<div class="mt-4 d-flex gap-2">
+					<button type="submit" class="btn btn-primary"><i class="bi bi-check-circle"></i> Save Changes</button>
+					<a asp-page="Index" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Cancel</a>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

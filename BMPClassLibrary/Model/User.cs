@@ -22,9 +22,6 @@ namespace BMPClassLibrary.Model
             }
         }
 
-    
-
-
 		public override string ToString()
         {
         return $"UserId: {UserId}, FirstName: {FirstName}, LastName: {LastName}, Email: {Email}, Phone: {Phone}";

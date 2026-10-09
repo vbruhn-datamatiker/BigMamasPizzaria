@@ -11,6 +11,7 @@ public class CreateModel : PageModel
     private readonly BookingRepository _bookingRepository;
     private readonly TableRepository _tableRepository;
 
+
     public CreateModel(BookingRepository bookingRepository, TableRepository tableRepository)
     {
         _bookingRepository = bookingRepository;

@@ -10,7 +10,10 @@
             <div class="card-header bg-white">
                 <h4 class="mb-0"><i class="bi bi-calendar-plus"></i> Book a table</h4>
             </div>
-            <form method="post" class="card-body">
+                <form method="post" asp-page="Create" class="card-body">
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Name</label>
@@ -24,12 +27,12 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Booking Date & Time</label>
-                        <input asp-for="BookingDate" type="datetime-local" class="form-control" required />
+                        <input asp-for="BookingDate" type="datetime-local" class="form-control" id="bookingDate" required />
                         <span asp-validation-for="BookingDate" class="text-danger"></span>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Guests</label>
-                        <input asp-for="GuestCount" type="number" min="1" max="20" class="form-control" required />
+                        <input asp-for="GuestCount" type="number" min="1" max="20" class="form-control" id="guestCount" required />
                         <span asp-validation-for="GuestCount" class="text-danger"></span>
                     </div>
                     <div class="col-md-3">
@@ -43,6 +46,14 @@
                         </select>
                         <span asp-validation-for="SelectedTableId" class="text-danger"></span>
                     </div>
+
+                    <div class="col-12">
+                        <button type="submit" id="findTables" class="btn btn-outline-secondary"
+                                asp-page-handler="FindTables" formnovalidate>
+                            Find available tables
+                        </button>
+                    </div>
+
                     @if (Model.AvailableTables.Count == 0)
                     {
                         <div class="col-12">
@@ -58,6 +69,13 @@
     </div>
 </div>
 
+<!-- Opdatet: Opdaterer automatisk når dato eller guests ændres -->
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+        <script>
+        document.getElementById('bookingDate').addEventListener('change', () => document.getElementById('findTables').click());
+        document.getElementById('guestCount').addEventListener('change', () => document.getElementById('findTables').click());
+    </script>
+
 }

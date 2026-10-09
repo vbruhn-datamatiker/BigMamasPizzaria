@@ -9,8 +9,11 @@ namespace BMPClassLibrary.Repository
 	public class BookingRepository
 	{
 		private List<Booking> _bookings;
+		
+		// Duration constant
+        public static readonly TimeSpan BookingDuration = TimeSpan.FromHours(2);
 
-		public BookingRepository()
+        public BookingRepository()
 		{
 			_bookings = new List<Booking>();
 		}
@@ -28,7 +31,15 @@ namespace BMPClassLibrary.Repository
 
 		public void AddBooking(Booking booking)
 		{
-			_bookings.Add(booking);
+			// Tilføjet: AddBooking afviser en booking der allerede eksisterer
+			if (booking.Status == "Confirmed" && !IsTableAvailable(booking.TableId, booking.BookingDate))
+            {
+                throw new InvalidOperationException(
+                    $"Table {booking.TableId} is already booked between " +
+                    $"{booking.BookingDate:HH:mm} and {(booking.BookingDate + BookingDuration):HH:mm}.");
+            }
+
+            _bookings.Add(booking);
 		}
 
 		public void RemoveBooking(int bookingId)
@@ -58,7 +69,14 @@ namespace BMPClassLibrary.Repository
 			Booking chosenBooking = GetById(id);
 			if (chosenBooking != null)
 			{
-				chosenBooking.Phone = upDateBooking.Phone;
+				// Tilføjet: Afviser hvis der allerede eksisterer en booking i tidsrummet
+                if (upDateBooking.Status == "Confirmed" && !IsTableAvailable(upDateBooking.TableId, upDateBooking.BookingDate, id))
+                {
+                    throw new InvalidOperationException(
+                        $"Table {upDateBooking.TableId} is not available at {upDateBooking.BookingDate:dd-MM-yyyy HH:mm}.");
+                }
+
+                chosenBooking.Phone = upDateBooking.Phone;
 				chosenBooking.Name = upDateBooking.Name;
 				chosenBooking.BookingDate = upDateBooking.BookingDate;
 				chosenBooking.GuestCount = upDateBooking.GuestCount;
@@ -76,10 +94,22 @@ namespace BMPClassLibrary.Repository
 				b.Status == "Confirmed").ToList();
 		}
 
-		public bool IsTableAvailable(int tableId, DateTime bookingDate)
+		public bool IsTableAvailable(int tableId, DateTime bookingDate, int? excludeBookingId = null)
 		{
-			var bookingsForTable = GetBookingsByTableAndDate(tableId, bookingDate);
-			return bookingsForTable.Count == 0;
+			// var bookingsForTable = GetBookingsByTableAndDate(tableId, bookingDate);
+			// return bookingsForTable.Count == 0;
+
+			// Overlap check - så en booking ikke clasher med sig selv når man opdaterer den
+			DateTime newStart = bookingDate;
+			DateTime newEnd = bookingDate + BookingDuration;
+
+			return !_bookings.Any(b =>
+			b.TableId == tableId &&
+			b.Status == "Confirmed" &&
+			b.BookingId != excludeBookingId &&
+			newStart < b.BookingDate + BookingDuration &&
+			b.BookingDate < newEnd);
+
 		}
 
 		public List<Booking> GetBookingsByDate(DateTime date)
@@ -89,7 +119,8 @@ namespace BMPClassLibrary.Repository
 
 		public List<Booking> GetActiveBookings()
 		{
-			return _bookings.Where(b => b.BookingDate >= DateTime.Now && b.Status == "Confirmed").ToList();
+			// Opdateret med BookingDuration > DateTime
+			return _bookings.Where(b => b.BookingDate + BookingDuration > DateTime.Now && b.Status == "Confirmed").ToList();
 		}
 
 		public void CancelBooking(int bookingId)
@@ -100,5 +131,8 @@ namespace BMPClassLibrary.Repository
 				booking.Status = "Cancelled";
 			}
 		}
+
+
+
 	}
 }

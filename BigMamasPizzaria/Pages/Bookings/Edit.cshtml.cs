@@ -75,20 +75,21 @@ public class EditModel : PageModel
 			return Page();
 		}
 
-		// Check if table is available (excluding current booking)
-		var conflictingBookings = _bookingRepository.GetBookingsByTableAndDate(Booking.SelectedTableId, Booking.BookingDate)
-			.Where(b => b.BookingId != Booking.BookingId)
-			.ToList();
+		// Tilføjet: Udskiftet med dette check
+        // Check if table is available in the 2-hour slot (excluding current booking)
+        if (Booking.Status == "Confirmed" &&
+            !_bookingRepository.IsTableAvailable(Booking.SelectedTableId, Booking.BookingDate, Booking.BookingId))
+        {
+            ModelState.AddModelError(string.Empty,
+                $"Table {Booking.SelectedTableId} is already booked between " +
+                $"{Booking.BookingDate:HH:mm} and {Booking.BookingDate.AddHours(2):HH:mm}.");
+            LoadAvailableTables();
+            return Page();
+        }
 
-		if (conflictingBookings.Count > 0)
-		{
-			ModelState.AddModelError(string.Empty, "Selected table is not available at the requested time.");
-			LoadAvailableTables();
-			return Page();
-		}
 
-		// Update booking
-		var updatedBooking = new Booking
+        // Update booking
+        var updatedBooking = new Booking
 		{
 			BookingId = Booking.BookingId,
 			Name = Booking.Name,

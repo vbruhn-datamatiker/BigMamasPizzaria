@@ -74,7 +74,11 @@ public class CreateModel : PageModel
 
         if (!_bookingRepository.IsTableAvailable(SelectedTableId, BookingDate))
         {
-            ModelState.AddModelError(string.Empty, "Selected table is not available at the requested time.");
+            // Tilføjet: Error message indeholder nu også timeslot
+            ModelState.AddModelError(string.Empty,
+                $"Table {SelectedTableId} is already booked between " +
+                $"{BookingDate:HH:mm} and {BookingDate.AddHours(2):HH:mm}. Please choose another time or table.");
+
             LoadAvailableTables();
             return Page();
         }
@@ -100,6 +104,24 @@ public class CreateModel : PageModel
         TempData["Message"] = "Booking confirmed successfully!";
         return RedirectToPage("Index");
     }
+
+    // Handler, only reloads the tables
+    public IActionResult OnPostFindTables()
+    {
+        // Only looking up tables - don't show "Name is required" etc.
+        ModelState.Clear();
+
+        LoadAvailableTables();
+
+        // If the chosen table isn't free at the new time, clear the choice
+        if (!AvailableTables.Any(t => t.TableId == SelectedTableId))
+        {
+            SelectedTableId = 0;
+        }
+
+        return Page();
+    }
+
 
     private void LoadAvailableTables()
     {
